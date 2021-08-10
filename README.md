@@ -1,4 +1,4 @@
-# chess-ai
+# Weakfish
 
 Simple [Chess](https://en.wikipedia.org/wiki/Chess) artificial intelligence written in JavaScript.
 Makes use of: 
