@@ -1,4 +1,4 @@
-var fen = '4k3/8/8/8/8/6rK/8/8 w KQkq - 0 1'
+var fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 var worker = new Worker('worker-1.0.js')
 
 var time_interval
@@ -118,8 +118,8 @@ var commandSetup = function() {
   worker.postMessage({ type: 'Setup', fen: chess.fen() })
   settings = {
     depth: 3,
-    time_white: 60000 * .1,
-    time_black: 60000 * .1,
+    time_white: 60000 * 10,
+    time_black: 60000 * 10,
     game_started: false
   }
 }
