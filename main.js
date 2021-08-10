@@ -1,6 +1,7 @@
-var fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+var fen = '4k3/8/8/8/8/6rK/8/8 w KQkq - 0 1'
 var worker = new Worker('worker-1.0.js')
 
+var time_interval
 var $timewhite = $('#timewhite')
 var $timeblack = $('#timeblack')
 var mouse_square
@@ -62,12 +63,16 @@ function onDrop (source, target) {
   worker.postMessage({ type: 'Move', move, settings });
   if (!settings.game_started) {
     settings.game_started = true
-    setInterval(() => {
+    time_interval = setInterval(() => {
       chess.turn() == 'w' ? settings.time_white -= 100 : settings.time_black -= 100
       $timewhite.html(ms_to_timer(settings.time_white))
       $timeblack.html(ms_to_timer(settings.time_black))
-      if (settings.time_white <= 0) { alert('Game over, lost by time!') }
-      if (settings.time_black <= 0) { alert('Game over, won by time!') }
+      if (settings.time_white <= 0) {
+        timeout(false)
+      }
+      if (settings.time_black <= 0) { 
+        timeout(true)
+      }
     }, 100)
   }
 }
@@ -95,12 +100,31 @@ board = Chessboard('board-container', config)
 var data
 var settings = {
   depth: 3,
-  time_white: 60000 * 10,
-  time_black: 60000 * 10,
+  time_white: 60000 * .1,
+  time_black: 60000 * .1,
   game_started: false
 }
 
-worker.postMessage({ type: 'Setup', fen: chess.fen() })
+function timeout(winner) {
+  winner ? alert('Game over, won by time!') : alert('Game over, lost by time!')
+  settings.game_started = false
+  clearInterval(time_interval)
+  commandSetup()
+}
+
+var commandSetup = function() {
+  chess.load(fen)
+  board.position(chess.fen())
+  worker.postMessage({ type: 'Setup', fen: chess.fen() })
+  settings = {
+    depth: 3,
+    time_white: 60000 * .1,
+    time_black: 60000 * .1,
+    game_started: false
+  }
+}
+
+commandSetup()
 
 worker.onmessage = function(message) {
   data = message.data
@@ -108,9 +132,14 @@ worker.onmessage = function(message) {
 }
 
 var commandMove = function() {
-  console.log(data.move)
   chess.move(data.move)
   board.position(chess.fen())
+  if (chess.game_over()) {
+    if (chess.in_stalemate()) { alert('Draw, stalemate!');settings.game_started = false;clearInterval(time_interval);commandSetup() }
+    if (chess.in_threefold_repetition()) { alert('Draw, threefold repetition!');settings.game_started = false;clearInterval(time_interval);commandSetup() }
+    if (chess.insufficient_material()) { alert('Draw, insufficient material!');settings.game_started = false;clearInterval(time_interval);commandSetup() }
+    if (chess.in_checkmate()) { alert(chess.turn() == 'w' ? 'Checkmate, computer wins' : 'Checkmate, you win');settings.game_started = false;clearInterval(time_interval);commandSetup() }
+  }
 }
 
 function ms_to_timer(ms) {
