@@ -1,7 +1,8 @@
 # Weakfish
 
-Simple [Chess](https://en.wikipedia.org/wiki/Chess) artificial intelligence written in JavaScript.
-Makes use of: 
+### Simple [Chess](https://en.wikipedia.org/wiki/Chess) artificial intelligence written in JavaScript.
+
+Makes use of : 
  - [Chessboardjs](https://chessboardjs.com/) for the board UI
  - [Chess.js](https://github.com/jhlywa/chess.js/blob/master/README.md) for move generation/validation, piece placement/movement, and check/checkmate/stalemate detection
  
