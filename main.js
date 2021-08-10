@@ -1,5 +1,5 @@
 var fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-var worker = new Worker('worker-1.0.js')
+var worker = new Worker('worker.js')
 
 var time_interval
 var $timewhite = $('#timewhite')
