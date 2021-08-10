@@ -2,6 +2,13 @@ importScripts('js/chess.js')
 
 var chess, settings
 
+var pawn_value = 100
+var knight_value = 320
+var bishop_value = 330
+var rook_value = 500
+var queen_value = 900
+var king_value = 20000
+
 /* Message handle function
 * get every instruction sent from "main.js" and executes them
 * example instruction : { type: 'Setup', fen: chess.fen() }
@@ -24,11 +31,17 @@ var commandSetup = function() {
     chess = new Chess(data.fen)
 }
 
+// Starts a search (for computer vs computer)
+var commandSearch = function() {
+    settings = data.settings
+    rootnegamax()
+}
+
 // Negamax algorithm root
 var rootnegamax = function() {
-    var start = performance.now()
+    var start_time = performance.now()
     var depth = settings.depth
-    var moves = chess.moves({ verbose: true })
+    var moves = ordermoves(chess.moves({ verbose: true }))
     var max = -Infinity
     var best_move
     
@@ -40,6 +53,7 @@ var rootnegamax = function() {
         if (score > max) { max = score; best_move = moves[i] }
     }
 
+    // console.log('TIME: ' + Math.round(performance.now() - start_time) / 1000)
     postMessage({ type: 'Move', move: chess.move(best_move)})
 }
 
@@ -52,18 +66,30 @@ var rootnegamax = function() {
 */
 var negamax = function(depth, alpha, beta) {
     if (depth == 0) { return evaluate() }
-    var moves = chess.moves({ verbose: true })
+    var moves = ordermoves(chess.moves({ verbose: true }))
     var l = moves.length
     for (var i = 0; i < l; i++) {
         chess.move(moves[i])
         var score = -negamax(depth - 1, -beta, -alpha)
         chess.undo()
 
-        if (score >= beta) { return score }
+        if (score >= beta) { return score } // beta cutoff
         if (score > alpha) { alpha = score }
     }
 
     return alpha
+}
+
+var ordermoves = function(moves) {
+    for (var i in moves ) {
+        moves[i].importance = 0
+        + (moves[i].flags == 'p' ? 16 : 0)
+        + (moves[i].flags == 'c' ? 8 : 0)
+        + (moves[i].flags == 'e' ? 4 : 0)
+    }
+
+    moves.sort( ( a, b ) => b.importance - a.importance )
+    return moves
 }
 
 /* Evaluation function, this is used to determine if a position
@@ -96,12 +122,12 @@ var evaluate = function() {
             */
             var index = j * 8 + i
             switch (piece.type) {
-                case 'p': total += (piece.color == 'w' ? 100 + white_pawn[index] : - (100 + black_pawn[index])); break
-                case 'n': total += (piece.color == 'w' ? 320 + white_knight[index] : - (320 + black_knight[index])); break
-                case 'b': total += (piece.color == 'w' ? 330 + white_bishop[index] : - (330 + black_bishop[index])); break
-                case 'r': total += (piece.color == 'w' ? 500 + white_rook[index] : - (500 + black_rook[index])); break
-                case 'q': total += (piece.color == 'w' ? 900 + white_queen[index] : - (900 + black_queen[index])); break
-                case 'k': total += (piece.color == 'w' ? 20000 + white_king[index] : - (20000 + black_king[index])); break // CHANGE TO "w/b_king_endgame" table on endgame positions
+                case 'p': total += (piece.color == 'w' ? pawn_value + white_pawn[index] : - (pawn_value + black_pawn[index])); break
+                case 'n': total += (piece.color == 'w' ? knight_value + white_knight[index] : - (knight_value + black_knight[index])); break
+                case 'b': total += (piece.color == 'w' ? bishop_value + white_bishop[index] : - (bishop_value + black_bishop[index])); break
+                case 'r': total += (piece.color == 'w' ? rook_value + white_rook[index] : - (rook_value + black_rook[index])); break
+                case 'q': total += (piece.color == 'w' ? queen_value + white_queen[index] : - (queen_value + black_queen[index])); break
+                case 'k': total += (piece.color == 'w' ? king_value + white_king[index] : - (king_value + black_king[index])); break // CHANGE TO "w/b_king_endgame" table on endgame positions
             }
             /* Also give bonuses and maluses
             * ADD BISHOP PAIR BONUS

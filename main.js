@@ -1,4 +1,5 @@
 var fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 var worker = new Worker('worker.js')
 
 var time_interval
@@ -100,8 +101,8 @@ board = Chessboard('board-container', config)
 var data
 var settings = {
   depth: 3,
-  time_white: 60000 * .1,
-  time_black: 60000 * .1,
+  time_white: 60000 * 10,
+  time_black: 60000 * 10,
   game_started: false
 }
 
