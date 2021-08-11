@@ -26,4 +26,4 @@ Makes use of :
   
 ### Looks cool i wanna play it 😍
 
- - You can try to defeat it on https://chess.ludovicdebever.site
+ - You can try to defeat it on https://dev.ludovicdebever.site/weakfish.html
