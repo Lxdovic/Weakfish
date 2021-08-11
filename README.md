@@ -14,7 +14,7 @@ Makes use of :
 ### Update changes & history
 
  - **v(0.3)**  10/08/21 > Added simple move ordering
- - **v(0.1 - First version)**  10/08/21
+ - **v(0.1)**  10/08/21 > First version
 
 ### Todo list
 
