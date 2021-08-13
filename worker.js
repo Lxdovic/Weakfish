@@ -1,4 +1,12 @@
 importScripts('js/chess.js')
+importScripts('book.js') 
+
+/* BOOK CONTAINS GAMES FROM
+* Michael Adams
+* Magnus Carlsen
+* Hikaru Nakamura
+* Alexey Dreev
+*/
 
 var chess, settings
 
@@ -23,12 +31,14 @@ var onmessage = function(message) {
 var commandMove = function() {
     settings = data.settings
     chess.move(data.move) // move
-    rootnegamax() // search
+    var book_position = checkbook(chess.pgn())
+    book_position == false ? rootnegamax() : postMessage({ type: 'Move', move: chess.move(book_position)})
 }
 
 // Setup the board with the given fen string
 var commandSetup = function() {
     chess = new Chess(data.fen)
+    // this.book()
 }
 
 // Starts a search (for computer vs computer)
@@ -39,7 +49,7 @@ var commandSearch = function() {
 
 // Negamax algorithm root
 var rootnegamax = function() {
-    var start_time = performance.now()
+    // var start_time = performance.now()
     var depth = settings.depth
     var moves = ordermoves(chess.moves({ verbose: true }))
     var max = -Infinity
@@ -139,6 +149,21 @@ var evaluate = function() {
     }
 
     return chess.turn() === 'w' ? total : -total
+}
+
+var checkbook = function(pgn) {
+    var book_games = this.book()
+    var pgn_string = ' ' + pgn.split('. ').join('.')
+    var found_position = book_games.search(pgn_string)
+    if (found_position == -1) return false
+    var result = ''
+    for (var i = 1; i < 9; i++) {
+        var char = book_games[found_position + pgn_string.length + i]
+        if (char == ' ') { break }
+        result += char
+    }
+    
+    return chess.turn() == 'w' ? result.split('.')[1] : result
 }
 
 var reverse_array = function(array) {
