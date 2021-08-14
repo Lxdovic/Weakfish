@@ -10,7 +10,7 @@ Makes use of :
 
  - **v(0.1)** _depth 3_ [Negamax](https://www.chessprogramming.org/Negamax), [α-β Pruning](https://www.chessprogramming.org/Alpha-Beta).
  - **v(0.3)** _depth 3_ [Negamax](https://www.chessprogramming.org/Negamax), [α-β Pruning](https://www.chessprogramming.org/Alpha-Beta), [Move ordering](https://www.chessprogramming.org/Move_Ordering).
- - **v(0.3)** _depth 3_ [Negamax](https://www.chessprogramming.org/Negamax), [α-β Pruning](https://www.chessprogramming.org/Alpha-Beta), [Move ordering](https://www.chessprogramming.org/Move_Ordering), [Opening book](https://www.chessprogramming.org/Opening_Book).
+ - **v(0.4)** _depth 3_ [Negamax](https://www.chessprogramming.org/Negamax), [α-β Pruning](https://www.chessprogramming.org/Alpha-Beta), [Move ordering](https://www.chessprogramming.org/Move_Ordering), [Opening book](https://www.chessprogramming.org/Opening_Book).
 
 ### Update changes & history
 
